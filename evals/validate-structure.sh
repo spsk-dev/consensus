@@ -89,6 +89,28 @@ for f in README.md CLAUDE.md LICENSE; do
   check "$f exists" test -f "$f"
 done
 
+# ARCHITECTURE.md
+check "ARCHITECTURE.md exists" test -f ARCHITECTURE.md
+check "ARCHITECTURE.md covers 3 validators" grep -q "Three Validators" ARCHITECTURE.md
+check "ARCHITECTURE.md has file map" grep -q "File Map" ARCHITECTURE.md
+check "ARCHITECTURE.md has design decisions" grep -q "Design Decisions" ARCHITECTURE.md
+
+# Eval fixtures
+check "strong-conclusion fixture exists" test -f evals/fixtures/strong-conclusion.md
+check "weak-conclusion fixture exists" test -f evals/fixtures/weak-conclusion.md
+check "gray-area-conclusion fixture exists" test -f evals/fixtures/gray-area-conclusion.md
+check "assertions.json exists" test -f evals/assertions.json
+check "assertions.json is valid JSON" jq empty evals/assertions.json
+ASSERTION_COUNT=$(jq '.assertions | length' evals/assertions.json)
+check "assertions.json has 10 assertions" test "$ASSERTION_COUNT" -eq 10
+check "assertions.json has verdict type" jq -e '[.assertions[] | select(.type == "verdict")] | length > 0' evals/assertions.json
+check "assertions.json has score type" jq -e '[.assertions[] | select(.type == "score")] | length > 0' evals/assertions.json
+check "assertions.json has ranking type" jq -e '[.assertions[] | select(.type == "ranking")] | length > 0' evals/assertions.json
+
+# Output schema
+check "output-schema.json has validator_output" jq -e '.validator_output' config/output-schema.json
+check "output-schema.json has consensus_report" jq -e '.consensus_report' config/output-schema.json
+
 # Install script
 check "install.sh is executable" test -x install.sh
 

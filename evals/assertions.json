@@ -1,0 +1,85 @@
+{
+  "version": "1.0.0",
+  "description": "Quality assertions for /consensus command output",
+  "assertions": [
+    {
+      "name": "strong-conclusion-high-confidence",
+      "fixture": "fixtures/strong-conclusion.md",
+      "type": "verdict",
+      "expected_verdict": "HIGH_CONFIDENCE",
+      "description": "Well-evidenced database pooling conclusion should get HIGH CONFIDENCE"
+    },
+    {
+      "name": "strong-conclusion-score-range",
+      "fixture": "fixtures/strong-conclusion.md",
+      "type": "score",
+      "dimension": "consensus_confidence",
+      "min": 7.5,
+      "max": 10.0,
+      "description": "Strong conclusion should score 7.5+ consensus confidence"
+    },
+    {
+      "name": "weak-conclusion-low-confidence",
+      "fixture": "fixtures/weak-conclusion.md",
+      "type": "verdict",
+      "expected_verdict": "LOW_CONFIDENCE",
+      "description": "Poorly-evidenced microservices rewrite should get LOW CONFIDENCE or NO CONSENSUS"
+    },
+    {
+      "name": "weak-conclusion-score-range",
+      "fixture": "fixtures/weak-conclusion.md",
+      "type": "score",
+      "dimension": "consensus_confidence",
+      "min": 1.0,
+      "max": 5.5,
+      "description": "Weak conclusion should score below 5.5 consensus confidence"
+    },
+    {
+      "name": "weak-conclusion-counter-arguments",
+      "fixture": "fixtures/weak-conclusion.md",
+      "type": "judge",
+      "rubric": "Does the report identify at least one 'strong' counter-argument to the microservices rewrite? YES or NO.",
+      "expected": "YES",
+      "description": "Weak conclusion should have strong counter-arguments identified"
+    },
+    {
+      "name": "gray-area-moderate-confidence",
+      "fixture": "fixtures/gray-area-conclusion.md",
+      "type": "verdict",
+      "expected_verdict": "MODERATE_CONFIDENCE",
+      "description": "GraphQL vs REST with mixed evidence should get MODERATE CONFIDENCE"
+    },
+    {
+      "name": "gray-area-score-range",
+      "fixture": "fixtures/gray-area-conclusion.md",
+      "type": "score",
+      "dimension": "consensus_confidence",
+      "min": 5.0,
+      "max": 8.0,
+      "description": "Gray area conclusion should score between 5.0 and 8.0"
+    },
+    {
+      "name": "all-fixtures-have-3-validators",
+      "fixture": "all",
+      "type": "structural",
+      "check": "validator_count",
+      "expected": 3,
+      "description": "Every consensus report must include exactly 3 validator verdicts"
+    },
+    {
+      "name": "all-fixtures-have-recommendation",
+      "fixture": "all",
+      "type": "structural",
+      "check": "has_recommendation",
+      "expected": true,
+      "description": "Every consensus report must end with a recommendation section"
+    },
+    {
+      "name": "cross-fixture-ranking",
+      "fixture": "ranking",
+      "type": "ranking",
+      "order": ["strong-conclusion", "gray-area-conclusion", "weak-conclusion"],
+      "description": "Strong conclusion must score higher than gray area, which must score higher than weak"
+    }
+  ]
+}
