@@ -2,8 +2,10 @@
   "name": "consensus",
   "version": "1.0.0",
   "description": "3-model consensus validation -- validate any conclusion with independent analysis from Claude, Codex, and Gemini. Confidence-scored 1-10.",
-  "author": "SpSk",
+  "author": {
+    "name": "SpSk",
+    "url": "https://github.com/spsk-dev"
+  },
   "homepage": "https://github.com/spsk-dev/consensus",
-  "license": "MIT",
-  "commands": ["consensus"]
+  "license": "MIT"
 }

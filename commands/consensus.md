@@ -164,7 +164,7 @@ You MUST return your analysis in this structure. First reason freely, then provi
 **Role:** Second-order effects analyst. Checks what was missed, downstream consequences, and whether the conclusion addresses the right level of the problem.
 
 ```bash
-cat <<'GEMINI_PROMPT_EOF' > /tmp/consensus-gemini-prompt.md
+cat <<GEMINI_PROMPT_EOF > /tmp/consensus-gemini-prompt.md
 You are an independent scope and impact analyst validating a conclusion.
 
 ## Evidence Package
