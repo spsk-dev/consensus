@@ -1,0 +1,57 @@
+{
+  "$schema": "Consensus Report Output Schema v1.0",
+  "description": "Every /consensus run produces output conforming to this schema. Validators return structured data; the synthesizer assembles the final report.",
+
+  "validator_output": {
+    "description": "Schema each validator MUST return",
+    "fields": {
+      "validator": "string — deep_verifier | devils_advocate | scope_analyst",
+      "model": "string — opus | codex | gemini | sonnet",
+      "confidence": "number — 1 to 10, integer or one decimal",
+      "confidence_justification": "string — specific deductions from 10",
+      "key_finding": "string — one sentence, max 100 chars",
+      "claims": [
+        {
+          "claim": "string — the claim being evaluated",
+          "status": "CONFIRMED | UNCONFIRMED | PARTIALLY_CONFIRMED",
+          "evidence": "string — what supports or contradicts"
+        }
+      ],
+      "counter_arguments": [
+        {
+          "argument": "string — the counter-argument",
+          "strength": "strong | moderate | weak",
+          "evidence": "string — what supports it"
+        }
+      ],
+      "gaps": [
+        "string — evidence or analysis that's missing"
+      ]
+    }
+  },
+
+  "consensus_report": {
+    "description": "Final synthesized report schema",
+    "fields": {
+      "conclusion": "string — the conclusion that was validated",
+      "domain": "string — architecture | code | design | strategy | incident | general",
+      "model_config": "string — e.g. opus+codex+gemini",
+      "validators": [
+        {
+          "name": "string — Deep Verifier | Devil's Advocate | Scope Analyst",
+          "model": "string",
+          "confidence": "number — 1-10",
+          "key_finding": "string"
+        }
+      ],
+      "consensus_confidence": "number — average of validator confidences, 1 decimal",
+      "verdict": "HIGH_CONFIDENCE | MODERATE_CONFIDENCE | LOW_CONFIDENCE | NO_CONSENSUS",
+      "disagreement_flag": "boolean — true if any two validators differ by >3 points",
+      "confirmed": ["string — claims all validators agree on"],
+      "disputed": ["string — claims with disagreement, including both sides"],
+      "new_findings": ["string — discoveries not in original analysis"],
+      "gaps": ["string — evidence that would resolve disputes"],
+      "recommendation": "string — action to take based on verdict"
+    }
+  }
+}
