@@ -7,10 +7,14 @@ Not limited to code. Use it for architecture decisions, design direction, root c
 ## Install
 
 ```bash
-claude /install-plugin consensus@spsk-dev/consensus
+# Add SpSk marketplace (one time)
+claude plugins marketplace add spsk-dev/marketplace
+
+# Install
+claude plugins install consensus@spsk
 ```
 
-Or manually:
+**Manual:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/spsk-dev/consensus/main/install.sh | bash
 ```
