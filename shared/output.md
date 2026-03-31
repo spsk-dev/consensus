@@ -4,15 +4,23 @@ This file defines the visual identity for consensus command output. Load via `@$
 
 ---
 
-## Signature Line
+## Brand Header
+
+The first output of every consensus command:
 
 ```
- SpSk  consensus  v{version}  ───  {model_count} models  ·  {model_config}
+ ███████╗██████╗ ███████╗██╗  ██╗
+ ██╔════╝██╔══██╗██╔════╝██║ ██╔╝
+ ███████╗██████╔╝███████╗█████╔╝
+ ╚════██║██╔═══╝ ╚════██║██╔═██╗
+ ███████║██║     ███████║██║  ██╗
+ ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+ consensus  v{version}  ───  {TYPE_LABEL}  ·  {model_config}
 ```
 
 - **{version}**: read from `${CLAUDE_PLUGIN_ROOT}/VERSION`
-- **{model_count}**: `3` for full mode, `2` for quick mode
-- **{model_config}**: e.g. `opus+codex+gemini`, `opus+codex+sonnet`, `opus+sonnet+sonnet`
+- **{TYPE_LABEL}**: from type-profiles.json (e.g. "General", "Architecture", "Security")
+- **{model_config}**: e.g. `opus+codex+gemini`, `opus+codex+sonnet`
 
 ---
 
