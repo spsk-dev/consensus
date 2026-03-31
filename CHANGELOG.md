@@ -2,6 +2,13 @@
 
 All notable changes to the SpSk consensus plugin.
 
+## [2.1.0] - 2026-03-31
+
+### Added
+
+- **HTML report generation**: `scripts/generate-report.sh` produces a self-contained HTML report from `consensus-state.json`. Dark/light mode, print-to-PDF, expandable validator details with claims and justifications.
+- **Phase 4 (Save State + Report)**: Consensus command now writes structured JSON state file and auto-generates HTML report after every validation.
+
 ## [2.0.0] - 2026-03-31
 
 ### Added

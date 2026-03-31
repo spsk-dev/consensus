@@ -145,6 +145,12 @@ check "security-conclusion fixture exists" test -f evals/fixtures/security-concl
 check "consensus.md references --type" grep -q -- "--type" commands/consensus.md
 check "consensus.md references type-profiles.json" grep -q "type-profiles.json" commands/consensus.md
 
+# v2.1.0: HTML report
+check "generate-report.sh exists" test -f scripts/generate-report.sh
+check "generate-report.sh is executable" test -x scripts/generate-report.sh
+check "consensus.md references generate-report.sh" grep -q "generate-report.sh" commands/consensus.md
+check "consensus.md has Phase 4" grep -q "Phase 4" commands/consensus.md
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"

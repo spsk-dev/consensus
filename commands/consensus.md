@@ -326,6 +326,41 @@ Finally, the recommendation:
 
 End with the branded footer from `@${CLAUDE_PLUGIN_ROOT}/shared/output.md`.
 
+### Phase 4: Save State + Generate HTML Report
+
+After displaying the terminal report, save the structured data and generate an HTML report.
+
+**Write consensus-state.json:**
+
+```bash
+CONSENSUS_DIR="/tmp/consensus-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$CONSENSUS_DIR"
+```
+
+Write `${CONSENSUS_DIR}/consensus-state.json` with the full consensus report data matching the schema at `${CLAUDE_PLUGIN_ROOT}/config/consensus-schema.json`. Include all fields: conclusion, type, model_config, validators (with confidence, key_finding, claims, counter_arguments, gaps), consensus_confidence, verdict, disagreement_flag, confirmed, disputed, new_findings, gaps, recommendation.
+
+**Generate HTML report:**
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/generate-report.sh" "${CONSENSUS_DIR}/consensus-state.json" "${CONSENSUS_DIR}/consensus-report.html"
+```
+
+**Display report path:**
+
+```
+┌─ REPORT ────────────────────────────────────────────────────┐
+│  ✓ HTML report generated                                     │
+│  Path: {CONSENSUS_DIR}/consensus-report.html                 │
+│                                                               │
+│  Open in browser to view full diagnostic                     │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**If report generation fails:** Show a warning but do not fail the consensus — the terminal output from Phase 3 already shows all results.
+
+**Clean up temp files** (but NOT the consensus dir — keep the report):
+`rm -f /tmp/consensus-evidence.md /tmp/consensus-gemini-prompt.md`
+
 ## Rules
 
 1. **Always dispatch all validators in parallel** — in a SINGLE message with parallel tool calls. Never sequentially.
