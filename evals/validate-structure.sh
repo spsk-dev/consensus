@@ -118,6 +118,33 @@ check "install.sh is executable" test -x install.sh
 HARDCODED=$(grep -rn "/Users/" --include='*.md' --include='*.json' --include='*.sh' --exclude-dir=.git --exclude-dir=.planning --exclude-dir=evals . 2>/dev/null || true)
 check "No hardcoded user paths" test -z "$HARDCODED"
 
+# v2.0.0: Type profiles
+check "type-profiles.json exists" test -f config/type-profiles.json
+check "type-profiles.json is valid JSON" jq empty config/type-profiles.json
+check "type-profiles.json has general type" jq -e '.types.general' config/type-profiles.json
+check "type-profiles.json has architecture type" jq -e '.types.architecture' config/type-profiles.json
+check "type-profiles.json has plan type" jq -e '.types.plan' config/type-profiles.json
+check "type-profiles.json has timeline type" jq -e '.types.timeline' config/type-profiles.json
+check "type-profiles.json has idea type" jq -e '.types.idea' config/type-profiles.json
+check "type-profiles.json has design type" jq -e '.types.design' config/type-profiles.json
+check "type-profiles.json has security type" jq -e '.types.security' config/type-profiles.json
+check "Each type has key_question" jq -e '.types | to_entries | all(.value.key_question)' config/type-profiles.json
+check "Each type has rubric array" jq -e '.types | to_entries | all(.value.rubric | length > 0)' config/type-profiles.json
+check "Each type has validator_focus" jq -e '.types | to_entries | all(.value.validator_focus.deep_verifier)' config/type-profiles.json
+
+# v2.0.0: JSON Schema
+check "consensus-schema.json exists" test -f config/consensus-schema.json
+check "consensus-schema.json is valid JSON" jq empty config/consensus-schema.json
+check "Schema has type enum" jq -e '.properties.type.enum | length > 5' config/consensus-schema.json
+
+# v2.0.0: Type fixtures
+check "architecture-conclusion fixture exists" test -f evals/fixtures/architecture-conclusion.md
+check "security-conclusion fixture exists" test -f evals/fixtures/security-conclusion.md
+
+# v2.0.0: Command references --type
+check "consensus.md references --type" grep -q -- "--type" commands/consensus.md
+check "consensus.md references type-profiles.json" grep -q "type-profiles.json" commands/consensus.md
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"

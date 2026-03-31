@@ -48,15 +48,32 @@ cd consensus && bash install.sh
 # Validate any conclusion
 /consensus "GraphQL is better than REST for our mobile API"
 
+# Type-aware validation — changes rubric and validator focus
+/consensus --type architecture "Microservices is the right call"
+/consensus --type plan "Migration plan in migration.md"
+/consensus --type timeline "Ship auth rewrite by March 15"
+/consensus --type security "JWT in httpOnly cookies is secure"
+/consensus --type idea "Build a CLI instead of a web app"
+/consensus --type design "Dark mode with warm palette"
+
 # Include supporting evidence
 /consensus --evidence @analysis.md "The auth middleware is the root cause"
-
-# Focus on a specific domain
-/consensus --domain architecture "Microservices is the right call for this team size"
 
 # Quick mode (2 validators)
 /consensus --quick "We should prioritize billing over notifications"
 ```
+
+### Validation Types
+
+| Type | Key Question | Rubric Focus |
+|------|-------------|--------------|
+| `general` | Is this conclusion correct? | Evidence quality, logic, alternatives, completeness |
+| `architecture` | Will this architecture work? | Feasibility, dependencies, migration, scalability |
+| `plan` | Will this plan succeed? | Prerequisites, sequencing, scope, rollback, evaluation |
+| `timeline` | Is this timeline realistic? | Dependencies, parallelism, buffer, resources |
+| `idea` | Is this worth pursuing? | Problem fit, effort/impact, alternatives, reversibility |
+| `design` | Is this the right direction? | Intent match, consistency, accessibility, originality |
+| `security` | Is this approach secure? | Threat surface, auth, data flow, trust boundaries |
 
 ## How It Works
 

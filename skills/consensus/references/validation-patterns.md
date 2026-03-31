@@ -41,3 +41,35 @@ Domain-specific guidance for validators based on conclusion type.
 **Devil's Advocate focus:** What other root causes could produce identical symptoms? Is the team anchored on the first plausible explanation? What evidence contradicts the theory?
 
 **Scope Analyst focus:** How many entities are affected? Has this happened before? Does the proposed fix prevent recurrence or just patch this instance?
+
+## Plan Validation
+
+**Deep Verifier focus:** Check each prerequisite and dependency against current reality. Do the files, APIs, and systems referenced actually exist? Are version requirements met? Is the proposed order of operations correct?
+
+**Devil's Advocate focus:** Find the step that will fail. What prerequisite is missing? What dependency will block progress? What's underestimated by 3x?
+
+**Scope Analyst focus:** What happens after the plan executes? What maintenance burden does it create? What was left out of scope that will come back to haunt the team?
+
+## Timeline Validation
+
+**Deep Verifier focus:** Check dependency chains. Are parallel tasks truly independent? Verify resource availability claims. Compare estimates against historical data for similar work.
+
+**Devil's Advocate focus:** Find the bottleneck. Which task is underestimated? What hidden dependency makes the critical path longer than shown? Where is the optimism bias?
+
+**Scope Analyst focus:** What external factors could shift the timeline? Holidays, other team priorities, vendor dependencies, approval processes? What happens if the hardest task takes 2x?
+
+## Idea Validation
+
+**Deep Verifier focus:** Verify the problem exists. Check if the proposed solution actually addresses the stated problem. Look for evidence of user need — not just team enthusiasm.
+
+**Devil's Advocate focus:** Propose the strongest alternative. Why would doing nothing be better? What simpler approach was dismissed too quickly? What's the opportunity cost?
+
+**Scope Analyst focus:** What downstream commitments does this imply? What else won't get done? How does this change the team's trajectory for the next 6 months?
+
+## Security Validation
+
+**Deep Verifier focus:** Trace the data flow. Where does sensitive data enter, move, and persist? Verify encryption, access controls, and token handling. Check trust boundaries.
+
+**Devil's Advocate focus:** Think like an attacker. What is the easiest way to compromise this? What happens if a dependency is compromised? What if credentials leak?
+
+**Scope Analyst focus:** What compliance implications exist? What audit trail is needed? What happens when credentials rotate or expire? What's the incident response plan?

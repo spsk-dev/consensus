@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SpSk Consensus Report",
+  "type": "object",
+  "required": ["conclusion", "type", "model_config", "validators", "consensus_confidence", "verdict", "confirmed", "disputed", "new_findings", "gaps", "recommendation"],
+  "additionalProperties": false,
+  "properties": {
+    "conclusion": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["general", "architecture", "plan", "timeline", "idea", "design", "security"] },
+    "domain": { "type": "string", "description": "Legacy field — use type instead" },
+    "model_config": { "type": "string", "description": "e.g. opus+codex+gemini" },
+    "validators": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validator_result" },
+      "minItems": 2,
+      "maxItems": 3
+    },
+    "consensus_confidence": { "type": "number", "minimum": 1, "maximum": 10 },
+    "verdict": { "type": "string", "enum": ["HIGH_CONFIDENCE", "MODERATE_CONFIDENCE", "LOW_CONFIDENCE", "NO_CONSENSUS"] },
+    "disagreement_flag": { "type": "boolean" },
+    "confirmed": { "type": "array", "items": { "type": "string" } },
+    "disputed": { "type": "array", "items": { "$ref": "#/$defs/disputed_item" } },
+    "new_findings": { "type": "array", "items": { "type": "string" } },
+    "gaps": { "type": "array", "items": { "type": "string" } },
+    "recommendation": { "type": "string" }
+  },
+  "$defs": {
+    "validator_result": {
+      "type": "object",
+      "required": ["validator", "model", "confidence", "key_finding", "claims"],
+      "properties": {
+        "validator": { "type": "string", "enum": ["deep_verifier", "devils_advocate", "scope_analyst"] },
+        "model": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 1, "maximum": 10 },
+        "confidence_justification": { "type": "string" },
+        "key_finding": { "type": "string", "maxLength": 100 },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["claim", "status", "evidence"],
+            "properties": {
+              "claim": { "type": "string" },
+              "status": { "type": "string", "enum": ["CONFIRMED", "UNCONFIRMED", "PARTIALLY_CONFIRMED"] },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
+        "counter_arguments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["argument", "strength"],
+            "properties": {
+              "argument": { "type": "string" },
+              "strength": { "type": "string", "enum": ["strong", "moderate", "weak"] },
+              "evidence": { "type": "string" }
+            }
+          }
+        },
+        "gaps": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "disputed_item": {
+      "type": "object",
+      "required": ["claim", "positions"],
+      "properties": {
+        "claim": { "type": "string" },
+        "positions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["validator", "position"],
+            "properties": {
+              "validator": { "type": "string" },
+              "position": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

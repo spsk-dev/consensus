@@ -1,7 +1,7 @@
 {
   "name": "consensus",
-  "version": "1.0.0",
-  "description": "3-model consensus validation -- validate any conclusion with independent analysis from Claude, Codex, and Gemini. Confidence-scored 1-10.",
+  "version": "2.0.0",
+  "description": "3-model consensus validation with type-aware rubrics -- validate any conclusion, architecture, plan, timeline, idea, design, or security decision. Confidence-scored 1-10 with formal JSON schema.",
   "author": {
     "name": "SpSk",
     "url": "https://github.com/spsk-dev"

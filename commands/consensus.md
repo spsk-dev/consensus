@@ -29,14 +29,27 @@ Validates **any conclusion, decision, or analysis** by dispatching it to 3 indep
 |----------|----------|-------------|
 | `"conclusion"` | Yes | The conclusion, decision, or analysis to validate (quoted string) |
 | `--evidence <file>` | No | File containing supporting evidence (read and included in evidence package) |
-| `--domain <type>` | No | Hint for validator focus: `architecture`, `code`, `design`, `strategy`, `incident`, `general` |
+| `--type <type>` | No | Validation type: `general` (default), `architecture`, `plan`, `timeline`, `idea`, `design`, `security`. Changes rubric dimensions and validator focus. |
 | `--quick` | No | Run 2 validators instead of 3 (skip Gemini if unavailable) |
+
+**Type examples:**
+```bash
+/consensus "We should use GraphQL"                         # general (default)
+/consensus --type architecture "Microservices for auth"    # architecture rubric
+/consensus --type plan "Migration plan in plan.md"         # plan rubric
+/consensus --type timeline "Ship by March 15"              # timeline rubric
+/consensus --type security "JWT in httpOnly cookies"       # security rubric
+/consensus --type idea "Build a CLI instead of web app"    # idea rubric
+/consensus --type design "Dark mode with warm palette"     # design rubric
+```
 
 ## Execution Protocol
 
 ### Phase 0: Parse Input
 
 Extract the conclusion from arguments. If `--evidence` is provided, read the file. If no evidence file, scan the conversation context for relevant data, code references, or prior analysis that supports the conclusion.
+
+**Parse `--type`:** If `--type <name>` is provided, read `${CLAUDE_PLUGIN_ROOT}/config/type-profiles.json` and load the matching profile. Store as `VALIDATION_TYPE` and `TYPE_PROFILE`. If no `--type`, default to `general`. If the type name doesn't match any profile, show error: "Unknown type '{name}'. Available: general, architecture, plan, timeline, idea, design, security."
 
 Build the **evidence package**:
 
@@ -46,8 +59,11 @@ Build the **evidence package**:
 ### Conclusion Under Review
 {The conclusion, decision, or analysis being validated}
 
-### Domain
-{Detected or specified: architecture | code | design | strategy | incident | general}
+### Validation Type
+{TYPE_PROFILE.label} — {TYPE_PROFILE.key_question}
+
+### Rubric Dimensions
+{TYPE_PROFILE.rubric — numbered list}
 
 ### Supporting Evidence
 {Evidence items — from file, conversation, or codebase analysis}
@@ -78,6 +94,21 @@ which codex && which gemini
 Launch all validators in a SINGLE message with parallel tool calls. Each gets the same evidence package but a different analytical lens.
 
 **CRITICAL: Do not coach validators toward the conclusion.** Present evidence neutrally. The whole point is independent analysis.
+
+**Type-aware prompting:** If `VALIDATION_TYPE` is not `general`, load the validator-specific focus from `TYPE_PROFILE.validator_focus` and append it to each validator's prompt:
+
+```
+VALIDATION TYPE: {TYPE_PROFILE.label}
+KEY QUESTION: {TYPE_PROFILE.key_question}
+
+RUBRIC (evaluate against these dimensions):
+{TYPE_PROFILE.rubric — numbered list}
+
+YOUR FOCUS FOR THIS TYPE:
+{TYPE_PROFILE.validator_focus[validator_name]}
+```
+
+This replaces the generic instructions with type-specific ones. The validator's core analytical lens (verify claims / find counter-arguments / check scope) remains the same — only the rubric and focus shift.
 
 #### Validator 1: "Deep Verifier" (Claude Opus Agent)
 
@@ -214,7 +245,7 @@ After all validators return, the orchestrator (YOU) synthesizes the consensus re
 Display the branded signature line:
 
 ```
- SpSk  consensus  v{version}  ───  3 models  ·  {model_config}
+ SpSk  consensus  v{version}  ───  {TYPE_PROFILE.label}  ·  {model_config}
 ```
 
 Where `{model_config}` is: `opus+codex+gemini` | `opus+codex+sonnet` | `opus+sonnet+sonnet` | etc.

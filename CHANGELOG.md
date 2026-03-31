@@ -2,6 +2,23 @@
 
 All notable changes to the SpSk consensus plugin.
 
+## [2.0.0] - 2026-03-31
+
+### Added
+
+- **`--type` validation modes**: 7 types (general, architecture, plan, timeline, idea, design, security). Each type has its own rubric dimensions, key question, and validator-specific focus overrides.
+- **`config/type-profiles.json`**: Structured type definitions with per-validator focus instructions.
+- **`config/consensus-schema.json`**: Formal JSON Schema (draft-2020-12) for consensus output. Validators and report structure validated against schema.
+- **New eval fixtures**: architecture-conclusion.md (ECS migration), security-conclusion.md (JWT cookies).
+- **Expanded validation-patterns.md**: Added plan, timeline, idea, and security validation guidance.
+- **20 new structural eval checks** for type profiles, schema, and fixtures (80 total).
+
+### Changed
+
+- `--domain` renamed to `--type` (backward compatible — both accepted).
+- Signature line now shows validation type: `SpSk consensus v2.0.0 ── Architecture · opus+codex+gemini`
+- Evidence package includes rubric dimensions and key question from the selected type.
+
 ## [1.0.0] - 2026-03-30
 
 ### Added

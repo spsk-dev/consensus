@@ -1,0 +1,116 @@
+{
+  "default": "general",
+  "types": {
+    "general": {
+      "label": "General",
+      "key_question": "Is this conclusion correct?",
+      "rubric": [
+        "Evidence quality — does the evidence actually support the claims?",
+        "Logical soundness — is the reasoning chain valid?",
+        "Alternatives considered — were other explanations evaluated?",
+        "Completeness — does the conclusion account for all relevant factors?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Trace every claim to evidence. Check if the evidence actually proves what it claims to prove.",
+        "devils_advocate": "Find the strongest counter-argument. What assumption, if wrong, collapses the conclusion?",
+        "scope_analyst": "What was missed? What happens after acting on this? How easy is it to reverse?"
+      }
+    },
+    "architecture": {
+      "label": "Architecture",
+      "key_question": "Will this architecture work in practice?",
+      "rubric": [
+        "Feasibility — can this be built with the team's current skills and stack?",
+        "Dependency risk — what external systems does this depend on? What if they change?",
+        "Migration path — how do you get from current state to proposed state?",
+        "Scalability — does this handle 10x the current load without rearchitecting?",
+        "Maintainability — can a new team member understand and modify this in 6 months?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Verify technical claims against the actual codebase. Check if proposed APIs, dependencies, and data flows are coherent.",
+        "devils_advocate": "Find the hidden integration work. What coupling does this create? What migration step will take 5x longer than estimated?",
+        "scope_analyst": "What are the second-order effects on existing systems? Who else is affected by this change?"
+      }
+    },
+    "plan": {
+      "label": "Plan",
+      "key_question": "Will this plan succeed as written?",
+      "rubric": [
+        "Prerequisites — are all dependencies identified and available?",
+        "Sequencing — do steps execute in the right order? Are there hidden blockers?",
+        "Scope realism — can this be done in the proposed timeframe with the proposed resources?",
+        "Rollback — what happens if step N fails? Can you undo partial execution?",
+        "Evaluation — how will you know if the plan succeeded? What are the measurable criteria?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Check each prerequisite and dependency against current reality. Do the files, APIs, and systems referenced actually exist?",
+        "devils_advocate": "Find the step that will fail. What prerequisite is missing? What dependency will block progress?",
+        "scope_analyst": "What happens after the plan executes? What maintenance burden does it create? What was left out of scope that will come back?"
+      }
+    },
+    "timeline": {
+      "label": "Timeline",
+      "key_question": "Is this timeline realistic?",
+      "rubric": [
+        "Dependency chains — are task dependencies correctly mapped? What is the critical path?",
+        "Parallelism — what can actually run in parallel vs what is secretly sequential?",
+        "Buffer — is there slack for unexpected issues? What if the hardest task takes 2x?",
+        "Resource constraints — are the right people available at the right time?",
+        "Historical accuracy — how do similar past efforts compare in actual vs estimated time?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Check dependency chains. Are parallel tasks truly independent? Verify resource availability claims.",
+        "devils_advocate": "Find the bottleneck. Which task is underestimated? What hidden dependency makes the critical path longer?",
+        "scope_analyst": "What external factors could shift the timeline? Holidays, other team priorities, vendor dependencies?"
+      }
+    },
+    "idea": {
+      "label": "Idea",
+      "key_question": "Is this idea worth pursuing?",
+      "rubric": [
+        "Problem-solution fit — does this solve a real problem for real users?",
+        "Effort vs impact — is the expected value worth the investment?",
+        "Alternatives — is this the best approach, or is there a simpler way?",
+        "Reversibility — if the idea fails, what is the cost of being wrong?",
+        "Team capability — does the team have the skills and context to execute this?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Verify the problem exists. Check if the proposed solution actually addresses the stated problem. Look for evidence of user need.",
+        "devils_advocate": "Propose the strongest alternative. Why would doing nothing be better? What simpler approach was dismissed too quickly?",
+        "scope_analyst": "What opportunity cost does this create? What else won't get done? What downstream commitments does this imply?"
+      }
+    },
+    "design": {
+      "label": "Design",
+      "key_question": "Is this the right design direction?",
+      "rubric": [
+        "Intent match — does the design serve its intended purpose and audience?",
+        "Consistency — does it follow established patterns, or deviate for good reason?",
+        "Accessibility — can all users interact with this effectively?",
+        "Originality — is this a thoughtful choice or a default/template?",
+        "Feasibility — can this be built with current tools and constraints?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Check if design claims match reality. Are the proposed components, patterns, and tools actually available and compatible?",
+        "devils_advocate": "Challenge the aesthetic choices. Is this truly better, or just different? What user need is being ignored?",
+        "scope_analyst": "What happens when this design meets real content, edge cases, and different devices? What states are missing?"
+      }
+    },
+    "security": {
+      "label": "Security",
+      "key_question": "Is this approach secure?",
+      "rubric": [
+        "Threat surface — what attack vectors does this expose or mitigate?",
+        "Authentication and authorization — are identity and access controls correct?",
+        "Data flow — where does sensitive data travel, and is it protected in transit and at rest?",
+        "Trust boundaries — what is trusted vs untrusted? Are assumptions about trust valid?",
+        "Compliance — does this meet relevant regulatory requirements (GDPR, SOC2, PCI)?"
+      ],
+      "validator_focus": {
+        "deep_verifier": "Trace the data flow. Where does sensitive data enter, move, and persist? Verify encryption, access controls, and token handling.",
+        "devils_advocate": "Think like an attacker. What is the easiest way to compromise this? What happens if a dependency is compromised?",
+        "scope_analyst": "What compliance implications exist? What audit trail is needed? What happens when credentials rotate or expire?"
+      }
+    }
+  }
+}
