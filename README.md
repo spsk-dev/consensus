@@ -1,4 +1,8 @@
-# SpSk Consensus
+```
+ SpSk  · consensus
+```
+
+# Consensus
 
 **3-model consensus validation for any conclusion.** Dispatches your analysis to Claude Opus, OpenAI Codex, and Google Gemini in parallel. Each model evaluates from a different analytical lens. Results synthesized with confidence scores on a 1-10 scale.
 
