@@ -6,17 +6,40 @@ Not limited to code. Use it for architecture decisions, design direction, root c
 
 ## Install
 
+### 1. Install the plugin
+
 ```bash
 # Add SpSk marketplace (one time)
 claude plugins marketplace add spsk-dev/marketplace
 
-# Install
+# Install consensus
 claude plugins install consensus@spsk
 ```
 
-**Manual:**
+### 2. Set up external models (recommended for full 3-model validation)
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/spsk-dev/consensus/main/install.sh | bash
+# Codex CLI (Devil's Advocate validator)
+npm install -g @openai/codex
+
+# Gemini CLI (Scope Analyst validator)
+npm install -g @anthropic/gemini-cli
+```
+
+Without external CLIs, consensus falls back to 3 Claude agents with distinct personas. Works, but you lose the cross-model diversity that makes consensus valuable.
+
+### Verify installation
+
+```bash
+claude /help
+# Look for: /consensus
+```
+
+### Manual install (alternative)
+
+```bash
+git clone https://github.com/spsk-dev/consensus.git
+cd consensus && bash install.sh
 ```
 
 ## Usage
