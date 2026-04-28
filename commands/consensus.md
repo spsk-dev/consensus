@@ -89,6 +89,33 @@ which codex && which gemini
 - **Neither installed**: Fall back to 3 Claude agents (Opus + 2x Sonnet with distinct analytical personas). Note in the report that external models were unavailable.
 - **`--quick` flag**: Use 2 validators only (Opus + best available external model)
 
+### Best-models policy (added v2.2.0 per Felipe directive 2026-04-28)
+
+**Consensus is high-leverage, not high-volume.** It fires only at architecture decisions, bug-hypothesis validation, pre-impl AC review, start-wave RESEARCH, and Felipe-decision validation — never on routine routing. Cost per call is acceptable; wrong-call cost is unacceptable. Therefore: always use BEST/THINKING models, not the fastest.
+
+| Validator | Model | Required Flag |
+|---|---|---|
+| Deep Verifier (Claude) | Opus (latest) | spawn via Agent tool with `model: "opus"` |
+| Devil's Advocate (Codex) | GPT-5 family with high reasoning | `codex exec --full-auto --effort high` |
+| Scope Analyst (Gemini) | gemini-2.5-pro (NOT preview, NOT flash) | `gemini -y -m gemini-2.5-pro -p ...` |
+
+**Never use `gemini-3-flash-preview`** (the CLI default). It returns `RESOURCE_EXHAUSTED / MODEL_CAPACITY_EXHAUSTED` 429s on shared cloudcode-pa OAuth. Always force `-m gemini-2.5-pro` (stable, thinking-tier capacity).
+
+**Never omit `--effort high` on Codex** for consensus calls. Default reasoning effort produces shallow stress-tests; consensus is the wrong place to skimp.
+
+### Graceful degradation — when a validator fails mid-call
+
+Validators can fail (rate limit, capacity exhaustion, API outage, CLI crash). Detect early — wait at most 5 min per validator before falling back. Required handling:
+
+| Failure | Fallback | Why |
+|---|---|---|
+| Gemini 429 / `MODEL_CAPACITY_EXHAUSTED` | Retry once with `-m gemini-2.5-flash` (still thinking-tier; lighter quota). If second retry 429s, replace with Claude Sonnet 4.6 via Agent tool (different model from Opus, same vendor). | Preserves 3-perspective even when third-party CLI is degraded. Sonnet ≠ Opus ≠ same reasoning. |
+| Codex CLI not in PATH or `command not found` | Replace with Claude Sonnet 4.6 as second validator. Note in report: "Codex unavailable — Sonnet substituted." | Document the substitution; don't silently degrade. |
+| All three external CLIs fail (Codex + Gemini both down) | Spawn 3 Claude agents (Opus + 2× Sonnet with distinct adversarial / scope personas). Note in report: "all external CLIs unavailable — 3-Claude consensus mode." | Better than no consensus. Less diverse perspective; flag explicitly. |
+| One validator times out beyond 5 min | Skip it. Note "X timed out — proceeding with 2-validator consensus." Confidence threshold raised: require both remaining validators ≥9 to APPLY (vs ≥8 with three). | Don't block on a hung CLI; explicit threshold adjustment when sample size shrinks. |
+
+The orchestrator MUST surface fallbacks in the consensus report. The user needs to know consensus was degraded so they can audit those specific decisions more carefully.
+
 ### Phase 2: Dispatch Three Validators in Parallel
 
 Launch all validators in a SINGLE message with parallel tool calls. Each gets the same evidence package but a different analytical lens.
@@ -161,7 +188,22 @@ You MUST return your analysis in this exact structure. First reason freely, then
 Write the evidence package to a temp file, then pipe to Codex:
 
 ```bash
-cat /tmp/consensus-evidence.md | codex exec --full-auto "You are an independent devil's advocate reviewer. Your job is to find the STRONGEST counter-argument to the proposed conclusion. The evidence has been piped via stdin.
+cat /tmp/consensus-evidence.md | codex exec --full-auto --effort high "=== CODEX SPAWN CONTEXT (READ FIRST) ===
+
+[1. HOW spawning] You are Codex CLI invoked via Bash \`codex exec --full-auto --effort high\`. Evidence package piped via stdin. Working directory: orchestrator's cwd.
+
+[2. COMMON PROBLEMS]
+- Sandbox: git + network blocked (you cannot commit/push or reach external hosts). Read + reason + report only.
+- This is synchronous codex exec — you run to completion, NOT a forwarder.
+- --effort high is set so you can think; produce a thorough adversarial analysis, not a quick scan.
+
+[3. WHAT I NEED] Act as DEVIL'S ADVOCATE. Find the STRONGEST counter-argument. Stress-test the conclusion.
+
+[4. HOW DELIVERED] Output format below — exact JSON in <validator_output> tags.
+
+=== END SPAWN CONTEXT — task below ===
+
+You are an independent devil's advocate reviewer. Your job is to find the STRONGEST counter-argument to the proposed conclusion. The evidence has been piped via stdin.
 
 Your tasks:
 1. Attack the conclusion: What's the weakest link? What assumption, if wrong, collapses the entire argument?
@@ -196,6 +238,21 @@ You MUST return your analysis in this structure. First reason freely, then provi
 
 ```bash
 cat <<GEMINI_PROMPT_EOF > /tmp/consensus-gemini-prompt.md
+=== GEMINI SPAWN CONTEXT (READ FIRST) ===
+
+[1. HOW spawning] You are Gemini CLI invoked via Bash \`gemini -y -m gemini-2.5-pro -p\`. Headless mode — process prompt, exit. Working directory: orchestrator's cwd.
+
+[2. COMMON PROBLEMS]
+- Stay focused on scope and second-order effects — deep code verification is the Opus validator's job; attack-the-conclusion is Codex's job.
+- Don't try to commit or modify state; orchestrator handles persistence.
+- gemini-2.5-pro is the thinking model; produce thorough analysis grounded in evidence you can cite.
+
+[3. WHAT I NEED] Act as SCOPE ANALYST. What's missed? What's downstream? What's the cost of being wrong?
+
+[4. HOW DELIVERED] Output format below — exact JSON in <validator_output> tags.
+
+=== END SPAWN CONTEXT — task below ===
+
 You are an independent scope and impact analyst validating a conclusion.
 
 ## Evidence Package
@@ -228,7 +285,7 @@ You MUST return your analysis in this structure. First reason freely, then provi
 </validator_output>
 GEMINI_PROMPT_EOF
 
-cd {repo-root} && gemini -y -p "$(cat /tmp/consensus-gemini-prompt.md)"
+cd {repo-root} && gemini -y -m gemini-2.5-pro -p "$(cat /tmp/consensus-gemini-prompt.md)"
 ```
 
 **Fallback personas** (when external CLIs unavailable):

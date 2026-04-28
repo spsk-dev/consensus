@@ -2,6 +2,26 @@
 
 All notable changes to the SpSk consensus plugin.
 
+## [2.2.0] - 2026-04-28
+
+### Changed
+
+- **Best-models policy enforced.** Consensus is high-leverage, not high-volume — always use thinking models, never speed-tier defaults.
+  - Codex: `codex exec --full-auto --effort high` (was `--full-auto` only — defaulted to mid-tier reasoning).
+  - Gemini: `gemini -y -m gemini-2.5-pro -p ...` (was `gemini -y -p ...` — defaulted to `gemini-3-flash-preview` which routinely 429s with `MODEL_CAPACITY_EXHAUSTED` on shared cloudcode-pa OAuth).
+  - Claude: Opus already specified.
+
+### Added
+
+- **Spawn-context preambles** on Codex and Gemini dispatches (HOW spawning + COMMON PROBLEMS + WHAT NEEDED + HOW DELIVERED). Gives external CLIs the operating constraints inline so they don't rediscover sandbox/scope/format gotchas. ~600 tokens; cost is acceptable for consensus calls.
+- **Graceful degradation table** — explicit fallback paths for: Gemini 429 (retry with flash, then Sonnet), Codex CLI missing (Sonnet substitute), both external CLIs down (3-Claude mode), single validator timeout (raised confidence threshold for remaining two). Orchestrator must surface degradation in report so user can audit affected decisions.
+
+### Why
+
+Validator review of pos-harness consensus invocation surfaced real production failures: Gemini rate-limited mid-overnight on preview-tier capacity, Codex producing shallow stress-tests at default reasoning effort. Both shipping defaults were wrong for high-leverage consensus calls.
+
+Felipe directive 2026-04-28: *"We should use the best models for consensus. We need thinking, not speed."*
+
 ## [2.1.0] - 2026-03-31
 
 ### Added
